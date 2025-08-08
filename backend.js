@@ -16,6 +16,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
+const MAX_LONGITUD = 1500; // máximo caracteres para enviar a Huggingface
 
 app.post("/resumir", async (req, res) => {
   console.log("Body recibido:", req.body);
@@ -27,8 +28,12 @@ app.post("/resumir", async (req, res) => {
     return res.status(400).json({ error: "No se recibió texto válido para resumir." });
   }
 
-  // Normalizar texto para evitar caracteres extraños
   texto = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  if (texto.length > MAX_LONGITUD) {
+    texto = texto.slice(0, MAX_LONGITUD);
+    console.log(`Texto truncado a ${MAX_LONGITUD} caracteres para Huggingface`);
+  }
 
   try {
     const respuesta = await axios.post(
