@@ -8,7 +8,7 @@ const app = express();
 // Configurar CORS para tu dominio
 app.use(cors({
   origin: "https://qinti.site",
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
