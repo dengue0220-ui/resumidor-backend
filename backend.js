@@ -20,12 +20,15 @@ const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
 app.post("/resumir", async (req, res) => {
   console.log("Body recibido:", req.body);
 
-  const { texto } = req.body;
+  let { texto } = req.body;
 
   if (!texto || typeof texto !== 'string' || texto.trim().length === 0) {
     console.log("Texto inválido recibido:", texto);
     return res.status(400).json({ error: "No se recibió texto válido para resumir." });
   }
+
+  // Normalizar texto para evitar caracteres extraños
+  texto = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   try {
     const respuesta = await axios.post(
